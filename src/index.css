@@ -26,8 +26,8 @@
   --color-blue-900: #020c1b;
   --color-blue-950: #010409;
 
-  /* iPhone System Font Stack */
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Apple SF Pro Display Font Stack */
+  --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
 
   /* Scaled up typography sizes (16px base text-sm) */
   --font-size-xs: 0.875rem;   /* 14px */
@@ -37,6 +37,110 @@
   --font-size-xl: 1.5rem;      /* 24px */
   --font-size-2xl: 1.75rem;   /* 28px */
   --font-size-3xl: 2.25rem;   /* 36px */
+}
+
+/* Modal/Popup customizations */
+.modal-popup-panel {
+  width: 70vw !important;
+  max-width: 70vw !important;
+}
+
+.modal-popup-title {
+  font-size: 22px !important;
+  font-weight: 500 !important;
+}
+
+/* Force modal body text (names, prices, labels, inputs, etc.) to 16px and normal weight (no bold) */
+.modal-popup-body,
+.modal-popup-body * {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+}
+
+/* Only allow section title headings in the modal body to be medium weight */
+.modal-popup-body h1,
+.modal-popup-body h2,
+.modal-popup-body h3,
+.modal-popup-body h4,
+.modal-popup-body h5 {
+  font-weight: 500 !important;
+}
+
+/* Table styling: 16px header, 14px body, SF Pro Display font, normal font weight (no bold headers, names, or prices) */
+table,
+table * {
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* Column titles (th) are 16px */
+table th,
+table th * {
+  font-size: 16px !important;
+}
+
+/* Info inside tables (td) are 14px */
+table td,
+table td * {
+  font-size: 14px !important;
+}
+
+/* Force all controls, buttons, links, inputs, selects, and textareas to use SF Pro Display */
+button,
+input,
+select,
+textarea,
+a,
+label,
+span,
+div {
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Force all buttons and interactive tabs to use normal weight (no bold export, download, new service, new quotation, tabs, etc.) */
+button,
+.button,
+input[type="button"],
+input[type="submit"],
+.btn {
+  font-weight: 400 !important;
+}
+
+/* Tab filters styling - expand width and make it 14px */
+.bg-white.border.border-slate-200.rounded-xl.p-1 button,
+.bg-white.border.border-slate-200.rounded-xl.p-1 button *,
+[class*="rounded-xl"][class*="p-1"] button {
+  font-size: 14px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  min-width: 110px !important;
+  text-align: center !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Dashboard custom styling */
+.dashboard-root,
+.dashboard-root * {
+  font-size: 14px !important;
+}
+
+.dashboard-root h1,
+.dashboard-root h2,
+.dashboard-root h3,
+.dashboard-root h4,
+.dashboard-root h5,
+.dashboard-root .card-title {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.dashboard-root .stat-value {
+  font-size: 22px !important;
+  font-weight: 700 !important;
 }
 
 * {

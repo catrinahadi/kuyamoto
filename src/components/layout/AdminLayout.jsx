@@ -89,23 +89,11 @@ export default function AdminLayout({ children }) {
       {/* Main area */}
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 sticky top-0 z-20 shadow-sm">
-          <div>
-            <h1 className="text-lg font-semibold text-slate-900">{currentTitle}</h1>
-            <p className="text-xs text-slate-500">KUYAMOTO &rsaquo; {currentTitle}</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="text-right hidden sm:block">
-                <div className="text-sm font-semibold text-slate-900 leading-tight">{profile?.full_name || 'Admin'}</div>
-                <div className="text-xs text-slate-500">Administrator</div>
-              </div>
-              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                <span className="text-white text-sm font-bold">
-                  {profile?.full_name?.charAt(0) || 'A'}
-                </span>
-              </div>
-            </div>
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-end px-6 sticky top-0 z-20 shadow-sm">
+          <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
+            <span className="text-white text-sm font-bold">
+              {profile?.full_name?.charAt(0) || 'A'}
+            </span>
           </div>
         </header>
 

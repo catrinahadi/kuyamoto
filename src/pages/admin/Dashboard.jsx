@@ -82,7 +82,7 @@ function StatCard({ label, value, icon: Icon, color, trend }) {
         )}
       </div>
       <div className="mt-4">
-        <div className="text-[22px] font-bold text-slate-900 tracking-tight">{value}</div>
+        <div className="text-[22px] font-bold text-slate-900 tracking-tight stat-value">{value}</div>
         <div className="text-sm font-medium text-slate-500 mt-0.5">{label}</div>
       </div>
     </div>
@@ -94,7 +94,7 @@ function SectionCard({ title, children, action }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50">
-        <h3 className="text-base font-semibold text-slate-800">{title}</h3>
+        <h3 className="text-sm font-semibold text-slate-800 card-title">{title}</h3>
         {action}
       </div>
       <div className="p-4">{children}</div>
@@ -226,7 +226,7 @@ export default function Dashboard() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-6 dashboard-root">
 
         {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -245,15 +245,15 @@ export default function Dashboard() {
                 <AreaChart data={monthlyRevenue} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%"  stopColor="#2563eb" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
+                      <stop offset="5%"  stopColor="#064e3b" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#064e3b" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `S$${v >= 1000 ? (v/1000).toFixed(0)+'k' : v}`} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#2563eb" strokeWidth={2.5} fill="url(#revGrad)" dot={{ fill: '#2563eb', r: 4, strokeWidth: 0 }} activeDot={{ r: 6 }} />
+                  <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#064e3b" strokeWidth={2.5} fill="url(#revGrad)" dot={{ fill: '#064e3b', r: 4, strokeWidth: 0 }} activeDot={{ r: 6 }} />
                 </AreaChart>
               </ResponsiveContainer>
             </SectionCard>
@@ -302,51 +302,55 @@ export default function Dashboard() {
               action={<Link to="/admin/inventory" className="text-xs text-blue-600 font-medium hover:underline">Manage →</Link>}
             >
               {inventoryData.length > 0 ? (
-                <ResponsiveContainer width="100%" height={260}>
-                  <BarChart data={inventoryData} layout="vertical" margin={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                    <YAxis 
-                      type="category" 
-                      dataKey="name" 
-                      tick={{ fontSize: 11, fill: '#334155' }} 
-                      axisLine={false} 
-                      tickLine={false} 
-                      width={180}
-                    />
-                    <Tooltip 
-                      cursor={{ fill: '#f8fafc' }}
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-white border border-slate-100 rounded-xl shadow-lg px-4 py-3">
-                              <p className="text-xs font-bold text-slate-700 mb-1.5">{payload[0].payload.name}</p>
-                              <div className="flex flex-col gap-1">
-                                <p className="text-xs text-slate-600 flex items-center justify-between gap-4">
-                                  <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#1e3a8a' }} />
-                                    In Stock
-                                  </span>
-                                  <span className="font-semibold text-slate-900">{payload[0].payload.stock}</span>
-                                </p>
-                                <p className="text-xs text-slate-600 flex items-center justify-between gap-4">
-                                  <span className="flex items-center gap-1.5">
-                                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#93c5fd' }} />
-                                    Min Level
-                                  </span>
-                                  <span className="font-semibold text-slate-900">{payload[0].payload.min}</span>
-                                </p>
-                              </div>
-                            </div>
-                          )
-                        }
-                        return null
-                      }}
-                    />
-                    <Bar dataKey="stock" name="In Stock" fill="#1e3a8a" radius={[0, 4, 4, 0]} maxBarSize={20} />
-                    <Bar dataKey="min" name="Min Level" fill="#93c5fd" radius={[0, 4, 4, 0]} maxBarSize={6} />
-                  </BarChart>
-                </ResponsiveContainer>
+                <div className="space-y-3.5 py-1">
+                  {(() => {
+                    const maxVal = Math.max(...inventoryData.map(i => Math.max(i.stock, i.min)), 10) * 1.1
+                    return inventoryData.map((item, idx) => {
+                      const isLow = item.stock <= item.min
+                      const isWarning = !isLow && item.stock <= item.min * 1.5
+                      const barColor = isLow ? 'bg-red-500' : isWarning ? 'bg-amber-500' : 'bg-blue-600'
+                      const stockPct = Math.min((item.stock / maxVal) * 100, 100)
+                      const minPct = Math.min((item.min / maxVal) * 100, 100)
+
+                      return (
+                        <div key={idx} className="flex items-center gap-4">
+                          {/* Item Name */}
+                          <div className="w-44 text-slate-700 truncate" title={item.name}>
+                            {item.name}
+                          </div>
+
+                          {/* Bar w/ Line End */}
+                          <div className="flex-1 relative h-6 flex items-center">
+                            {/* Background Track */}
+                            <div className="w-full bg-slate-100 h-2 rounded-full" />
+                            
+                            {/* Actual Stock Bar */}
+                            <div 
+                              className={`absolute left-0 h-2 rounded-full ${barColor} transition-all duration-500`}
+                              style={{ width: `${stockPct}%` }}
+                            />
+                            
+                            {/* Minimum Level Line End Marker */}
+                            <div 
+                              className="absolute h-3.5 w-0.5 bg-slate-400"
+                              style={{ left: `${minPct}%`, transform: 'translateX(-50%)' }}
+                              title={`Min Level: ${item.min}`}
+                            />
+                          </div>
+
+                          {/* Stock Info */}
+                          <div className="w-24 text-right text-slate-500 flex justify-end gap-1.5 whitespace-nowrap">
+                            <span className={`font-semibold ${isLow ? 'text-red-600' : isWarning ? 'text-amber-600' : 'text-slate-900'}`}>
+                              {item.stock}
+                            </span>
+                            <span className="text-slate-400">/</span>
+                            <span>{item.min} min</span>
+                          </div>
+                        </div>
+                      )
+                    })
+                  })()}
+                </div>
               ) : (
                 <div className="h-48 flex items-center justify-center text-slate-400 text-sm">No inventory data yet</div>
               )}

@@ -5,9 +5,12 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Badge from '@/components/ui/Badge'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { generateInvoicePdf } from '@/utils/generateInvoicePdf'
+import { exportServicesToExcel } from '@/utils/exportExcel'
 import { 
   Plus, Pencil, Trash2, Search, Eye, CheckCircle, 
-  ChevronLeft, ChevronRight, X, AlertTriangle, Calendar, User
+  ChevronLeft, ChevronRight, X, AlertTriangle, FileText, Download,
+  Receipt, TableIcon
 } from 'lucide-react'
 
 const PAGE_SIZE = 10
@@ -57,6 +60,37 @@ export default function Services() {
   const [form, setForm]   = useState(emptyForm)
   const [items, setItems] = useState([{ ...emptyItem }])
   const [saving, setSaving] = useState(false)
+
+  // Multi-select for combined invoice
+  const [selectedIds, setSelectedIds] = useState(new Set())
+  const [generatingPdf, setGeneratingPdf] = useState(false)
+
+  const toggleSelect = (id) => setSelectedIds(prev => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
+
+  const handleGenerateInvoice = async (recordsArr, isReceipt = false) => {
+    setGeneratingPdf(true)
+    try {
+      await generateInvoicePdf(recordsArr, { isReceipt })
+      toast.success(isReceipt ? 'Receipt downloaded!' : 'Invoice downloaded!')
+    } catch (e) {
+      toast.error('Failed to generate PDF: ' + e.message)
+    } finally {
+      setGeneratingPdf(false)
+    }
+  }
+
+  const handleMultiInvoice = async () => {
+    if (selectedIds.size === 0) return toast.error('Select at least one service record')
+    const selected = records.filter(r => selectedIds.has(r.id))
+    const customers = new Set(selected.map(r => r.customer_id))
+    if (customers.size > 1) return toast.error('Multi-invoice only works for the same customer')
+    await handleGenerateInvoice(selected, false)
+    setSelectedIds(new Set())
+  }
 
   const fetchRecords = useCallback(async () => {
     setLoading(true)
@@ -248,11 +282,21 @@ export default function Services() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-bold text-slate-900">Service Records</h2>
-            <p className="text-sm text-slate-500">{total} total service records</p>
+            <p className="text-sm text-slate-500">{total} total records{selectedIds.size > 0 && ` · ${selectedIds.size} selected`}</p>
           </div>
-          <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-sm">
-            <Plus className="w-4 h-4" /> New Service
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {selectedIds.size > 0 && (
+              <button onClick={handleMultiInvoice} disabled={generatingPdf} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-sm disabled:opacity-50">
+                <FileText className="w-4 h-4" /> Combined Invoice ({selectedIds.size})
+              </button>
+            )}
+            <button onClick={() => exportServicesToExcel(records)} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-sm font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm">
+              <Download className="w-4 h-4" /> Export Excel
+            </button>
+            <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-sm">
+              <Plus className="w-4 h-4" /> New Service
+            </button>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -270,6 +314,7 @@ export default function Services() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr className="text-left text-xs text-slate-500 uppercase tracking-wider">
+                  <th className="px-3 py-3.5 font-semibold w-8"><input type="checkbox" className="rounded" onChange={e => setSelectedIds(e.target.checked ? new Set(records.map(r => r.id)) : new Set())} checked={selectedIds.size === records.length && records.length > 0} /></th>
                   <th className="px-5 py-3.5 font-semibold">Service #</th>
                   <th className="px-5 py-3.5 font-semibold">Quot #</th>
                   <th className="px-5 py-3.5 font-semibold">Customer</th>
@@ -282,17 +327,20 @@ export default function Services() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {loading ? Array.from({ length: 4 }).map((_, i) => <tr key={i}><td colSpan={9} className="px-5 py-3"><div className="h-4 bg-slate-100 rounded animate-pulse" /></td></tr>)
-                : records.length === 0 ? <tr><td colSpan={9} className="py-16 text-center text-slate-400">No service records found</td></tr>
+                {loading ? Array.from({ length: 4 }).map((_, i) => <tr key={i}><td colSpan={10} className="px-5 py-3"><div className="h-4 bg-slate-100 rounded animate-pulse" /></td></tr>)
+                : records.length === 0 ? <tr><td colSpan={10} className="py-16 text-center text-slate-400">No service records found</td></tr>
                 : records.map(r => (
-                  <tr key={r.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={r.id} className={`hover:bg-slate-50/50 transition-colors ${selectedIds.has(r.id) ? 'bg-indigo-50/40' : ''}`}>
+                    <td className="px-3 py-3.5">
+                      <input type="checkbox" className="rounded" checked={selectedIds.has(r.id)} onChange={() => toggleSelect(r.id)} />
+                    </td>
                     <td className="px-5 py-3.5 font-mono text-blue-600 text-xs font-semibold">KM-{String(r.service_number||0).padStart(4,'0')}</td>
                     <td className="px-5 py-3.5 font-mono text-slate-500 text-xs font-semibold">
-                      {r.quotations ? `QUOTE-2026-${String(r.quotations.quotation_number).padStart(4,'0')}` : '—'}
+                      {r.quotations ? `QUOT-${String(r.quotations.quotation_number).padStart(4,'0')}` : '—'}
                     </td>
                     <td className="px-5 py-3.5 font-medium text-slate-800">{r.customers?.name||'—'}</td>
                     <td className="px-5 py-3.5 text-slate-600 text-xs">{r.vehicles ? `${r.vehicles.make} ${r.vehicles.model} (${r.vehicles.plate_number})` : '—'}</td>
-                    <td className="px-5 py-3.5 text-slate-600 text-xs">{r.service_date ? new Date(r.service_date).toLocaleDateString('en-PH') : '—'}</td>
+                    <td className="px-5 py-3.5 text-slate-600 text-xs">{r.service_date ? new Date(r.service_date).toLocaleDateString('en-SG') : '—'}</td>
                     <td className="px-5 py-3.5 text-slate-600">{r.technician||'—'}</td>
                     <td className="px-5 py-3.5 text-right font-semibold text-slate-900">{fmt(r.total_cost)}</td>
                     <td className="px-5 py-3.5 text-center"><Badge variant={statusVariant[r.status]}>{r.status}</Badge></td>
@@ -301,7 +349,7 @@ export default function Services() {
                         <button onClick={() => { setViewRec(r); setShowView(true) }} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg" title="View Details"><Eye className="w-4 h-4" /></button>
                         <button onClick={() => openEdit(r)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit"><Pencil className="w-4 h-4" /></button>
                         {r.status === 'In Progress' && (
-                          <button onClick={() => { setFinalizeId(r.id); setFinalize(true) }} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg" title="Finalize & Deduct Inventory"><CheckCircle className="w-4 h-4" /></button>
+                          <button onClick={() => { setFinalizeId(r.id); setFinalize(true) }} className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg" title="Finalize & Deduct Inventory"><CheckCircle className="w-4 h-4" /></button>
                         )}
                         <button onClick={() => { setDeleteId(r.id); setShowConfirm(true) }} className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg" title="Delete"><Trash2 className="w-4 h-4" /></button>
                       </div>
@@ -528,6 +576,20 @@ export default function Services() {
                 <div className="flex justify-between text-slate-600"><span>Parts:</span><span>{fmt(viewRec.parts_cost)}</span></div>
                 <div className="flex justify-between font-bold text-slate-900 border-t pt-1"><span>Total Paid:</span><span>{fmt(viewRec.total_cost)}</span></div>
               </div>
+            </div>
+
+            <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+              <div className="flex gap-2">
+                <button onClick={() => handleGenerateInvoice([viewRec], false)} disabled={generatingPdf} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 transition-all shadow-sm disabled:opacity-50">
+                  <Download className="w-3.5 h-3.5" /> Download Invoice
+                </button>
+                {viewRec.status === 'Invoiced' && (
+                  <button onClick={() => handleGenerateInvoice([viewRec], true)} disabled={generatingPdf} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm disabled:opacity-50">
+                    <Receipt className="w-3.5 h-3.5" /> Download Receipt
+                  </button>
+                )}
+              </div>
+              <button onClick={() => setShowView(false)} className="px-5 py-2.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all">Close</button>
             </div>
           </div>
         )}

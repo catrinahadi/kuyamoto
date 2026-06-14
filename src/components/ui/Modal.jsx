@@ -32,10 +32,10 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
         onClick={onClose}
       />
       {/* Panel */}
-      <div className={`relative w-full ${sizeClasses[size] || sizeClasses['md']} bg-white rounded-2xl shadow-2xl animate-scale-in max-h-[85vh] flex flex-col`}>
+      <div className="relative bg-white rounded-2xl shadow-2xl animate-scale-in max-h-[85vh] flex flex-col modal-popup-panel">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 flex-shrink-0">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-slate-900 modal-popup-title">{title}</h2>
           <button
             onClick={onClose}
             className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all"
@@ -44,7 +44,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
           </button>
         </div>
         {/* Body */}
-        <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="flex-1 overflow-y-auto px-6 py-5 modal-popup-body">
           {children}
         </div>
       </div>
