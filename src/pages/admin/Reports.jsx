@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import AdminLayout from '@/components/layout/AdminLayout'
 import { supabase } from '@/lib/supabase'
-import { FileText, Download, Calendar } from 'lucide-react'
+import { FileText, Download, Calendar, ChevronDown } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
@@ -24,6 +24,14 @@ export default function Reports() {
   const [dateFrom, setDateFrom] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10))
   const [dateTo, setDateTo]     = useState(new Date().toISOString().slice(0, 10))
   const [statusFilter, setStatus] = useState('All')
+  const [exportOpen, setExportOpen] = useState(false)
+  const exportRef = useRef(null)
+
+  useEffect(() => {
+    const handleClick = (e) => { if (exportRef.current && !exportRef.current.contains(e.target)) setExportOpen(false) }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
 
   useEffect(() => { fetchData() }, [tab, dateFrom, dateTo, statusFilter])
 
@@ -169,40 +177,78 @@ export default function Reports() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white border border-slate-200 rounded-2xl px-5 py-4 flex flex-wrap items-end gap-4 shadow-sm">
-          {hasDateFilter && (
-            <>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5" /> From
-                </label>
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={e => setDateFrom(e.target.value)}
-                  className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-semibold text-slate-500">To</label>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={e => setDateTo(e.target.value)}
-                  className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
-                />
-              </div>
-            </>
-          )}
+        <div className="bg-white border border-slate-200 rounded-2xl px-5 py-4 space-y-4 shadow-sm">
+
+          {/* Row 1: Date range + Export */}
+          <div className="flex flex-wrap items-end gap-4">
+            {hasDateFilter && (
+              <>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5" /> From
+                  </label>
+                  <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={e => setDateFrom(e.target.value)}
+                    className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold text-slate-500">To</label>
+                  <input
+                    type="date"
+                    value={dateTo}
+                    onChange={e => setDateTo(e.target.value)}
+                    className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* Export Dropdown */}
+            <div className="ml-auto relative" ref={exportRef}>
+              <button
+                onClick={() => setExportOpen(o => !o)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-slate-800 text-white text-xs font-semibold rounded-xl hover:bg-slate-700 transition-all shadow-sm"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Export
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${exportOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {exportOpen && (
+                <div className="absolute right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-10">
+                  <button
+                    onClick={() => { exportPDF(); setExportOpen(false) }}
+                    className="flex items-center gap-2.5 w-full px-4 py-3 text-xs font-semibold text-slate-700 hover:bg-red-50 hover:text-red-600 transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" /> Export as PDF
+                  </button>
+                  <button
+                    onClick={() => { exportExcel(); setExportOpen(false) }}
+                    className="flex items-center gap-2.5 w-full px-4 py-3 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-600 transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" /> Export as Excel
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Row 2: Status filter */}
           {hasStatusFilter && (
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-slate-500">Status</label>
-              <div className="flex bg-slate-50 border border-slate-200 rounded-xl p-1 gap-0.5">
+              <div className="flex bg-slate-50 border border-slate-200 rounded-xl p-1 gap-0.5 w-fit">
                 {statusOpts.map(s => (
                   <button
                     key={s}
                     onClick={() => setStatus(s)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${statusFilter === s ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${
+                      statusFilter === s
+                        ? 'bg-slate-800 text-white shadow-sm'
+                        : 'text-slate-500 hover:text-slate-700'
+                    }`}
                   >
                     {s}
                   </button>
@@ -210,14 +256,6 @@ export default function Reports() {
               </div>
             </div>
           )}
-          <div className="ml-auto flex items-end gap-2">
-            <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2.5 bg-red-500 text-white text-xs font-semibold rounded-xl hover:bg-red-600 transition-all shadow-sm">
-              <Download className="w-3.5 h-3.5" /> Export PDF
-            </button>
-            <button onClick={exportExcel} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm">
-              <Download className="w-3.5 h-3.5" /> Export Excel
-            </button>
-          </div>
         </div>
 
         {/* Summary cards for revenue */}
