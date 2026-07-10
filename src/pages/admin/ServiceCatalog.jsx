@@ -87,7 +87,7 @@ export default function ServiceCatalog() {
     else { toast.success('Service deleted'); fetchServices() }
   }
 
-  const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
+  const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
 
   return (
     <AdminLayout>
@@ -171,7 +171,7 @@ export default function ServiceCatalog() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Labor Cost (S$)</label>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Labor Cost ($)</label>
               <input type="number" min="0" step="0.01" value={form.labor_cost} onChange={e => setForm(p => ({ ...p, labor_cost: e.target.value }))} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>

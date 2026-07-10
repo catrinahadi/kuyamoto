@@ -18,7 +18,7 @@ const emptyForm = { customer_id: '', vehicle_id: '', date: new Date().toISOStrin
 const emptyItem = { description: '', item_type: 'service', quantity: 1, unit_price: 0, total_price: 0 }
 
 const statusVariant = { Pending: 'warning', Approved: 'success', Rejected: 'danger', Converted: 'info' }
-const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
+const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
 
 export default function Quotations() {
   const [quotations, setQuotations] = useState([])

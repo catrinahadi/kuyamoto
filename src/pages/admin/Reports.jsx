@@ -6,7 +6,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 
-const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
+const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-PH') : '—'
 
 const TABS = [

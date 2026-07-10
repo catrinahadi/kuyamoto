@@ -10,7 +10,7 @@ import { Plus, Pencil, Trash2, Search, AlertTriangle, RefreshCw, ChevronLeft, Ch
 const PAGE_SIZE = 10
 const CATEGORIES = ['Consumable', 'Spare Part', 'Tool', 'Fluid']
 const emptyForm = { item_name: '', category: 'Consumable', unit: 'pcs', quantity_in_stock: 0, minimum_stock_level: 0, cost_price: 0, selling_price: 0 }
-const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
+const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
 
 function stockVariant(qty, min) {
   if (qty <= min) return 'danger'
@@ -208,11 +208,11 @@ export default function Inventory() {
               <input type="number" min="0" value={form.minimum_stock_level} onChange={e => setField('minimum_stock_level', e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Cost Price (S$)</label>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Cost Price ($)</label>
               <input type="number" min="0" step="0.01" value={form.cost_price} onChange={e => setField('cost_price', e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Selling Price (S$)</label>
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">Selling Price ($)</label>
               <input type="number" min="0" step="0.01" value={form.selling_price} onChange={e => setField('selling_price', e.target.value)} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import AdminLayout from '@/components/layout/AdminLayout'
 import Modal from '@/components/ui/Modal'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
@@ -109,7 +109,11 @@ export default function Customers() {
     }))
   }
 
-  const addVehicleRow  = () => setVehicles(p => [...p, { ...emptyVehicle }])
+  const vehiclesEndRef = useRef(null)
+  const addVehicleRow  = () => {
+    setVehicles(p => [...p, { ...emptyVehicle }])
+    setTimeout(() => vehiclesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), 50)
+  }
   const removeVehicleRow = async (i, vehicleId) => {
     if (vehicleId) {
       const { error } = await supabase.from('vehicles').delete().eq('id', vehicleId)
@@ -190,19 +194,20 @@ export default function Customers() {
             <h2 className="text-xl font-bold text-slate-900">Customers</h2>
             <p className="text-sm text-slate-500">{total} total registered customers</p>
           </div>
-          <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-navy-600 text-white text-sm font-semibold rounded-xl hover:bg-navy-700 transition-all shadow-sm" style={{background:'#1e3a8a'}}>
-            <Plus className="w-4 h-4" /> Add Customer
-          </button>
-        </div>
-
-        {/* Search */}
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input
-            value={search} onChange={e => { setSearch(e.target.value); setPage(0) }}
-            placeholder="Search name, contact, social media…"
-            className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          />
+          <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                value={search} onChange={e => { setSearch(e.target.value); setPage(0) }}
+                placeholder="Search name, contact, social media…"
+                className="w-64 pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              />
+            </div>
+            <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-navy-600 text-white text-sm font-semibold rounded-xl hover:bg-navy-700 transition-all shadow-sm" style={{background:'#1e3a8a'}}>
+              <Plus className="w-4 h-4" /> Add Customer
+            </button>
+          </div>
         </div>
 
         {/* Table */}
@@ -241,11 +246,11 @@ export default function Customers() {
                     <td className="px-5 py-3.5">
                       <div className="flex flex-col gap-1">
                         {c.vehicles?.map((v, idx) => (
-                          <span key={idx} className="inline-flex items-center gap-1 text-[11px] text-slate-600 bg-slate-50 px-2 py-0.5 border border-slate-100 rounded">
-                            <Car className="w-3 h-3 text-slate-400" /> {v.make} {v.model} {v.plate_number ? `(${v.plate_number})` : ''}
+                          <span key={idx} className="inline-flex items-center gap-1 text-[11px] text-slate-600">
+                            <Car className="w-3 h-3 text-slate-400" /> {v.make} {v.model} {v.plate_number ? v.plate_number : ''}
                           </span>
                         ))}
-                        {(!c.vehicles || c.vehicles.length === 0) && <span className="text-slate-400 text-xs">—</span>}
+                        {(!c.vehicles || c.vehicles.length === 0) && <span className="text-slate-400 text-xs"></span>}
                       </div>
                     </td>
                     <td className="px-5 py-3.5">
@@ -384,7 +389,7 @@ export default function Customers() {
 
             <div className="space-y-4">
               {vehicles.map((v, i) => (
-                <div key={i} className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+                <div key={i} className="p-5 bg-slate-50 rounded-2xl space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Vehicle {i + 1}</span>
                     {vehicles.length > 1 && (
@@ -475,6 +480,7 @@ export default function Customers() {
                   </div>
                 </div>
               ))}
+              <div ref={vehiclesEndRef} />
             </div>
           </div>
 

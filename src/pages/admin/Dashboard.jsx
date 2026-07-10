@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import Badge from '@/components/ui/Badge'
 
-const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
 const COLORS = ['#2563eb', '#f97316', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4']
 
@@ -251,7 +251,7 @@ export default function Dashboard() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                   <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `S$${v >= 1000 ? (v/1000).toFixed(0)+'k' : v}`} />
+                  <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v >= 1000 ? (v/1000).toFixed(0)+'k' : v}`} />
                   <Tooltip content={<CustomTooltip />} />
                   <Area type="monotone" dataKey="revenue" name="Revenue" stroke="#064e3b" strokeWidth={2.5} fill="url(#revGrad)" dot={{ fill: '#064e3b', r: 4, strokeWidth: 0 }} activeDot={{ r: 6 }} />
                 </AreaChart>

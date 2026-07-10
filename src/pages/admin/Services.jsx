@@ -15,7 +15,7 @@ import {
 
 const PAGE_SIZE = 10
 const emptyItem = { description: '', inventory_item_id: null, quantity: 1, unit_price: 0, total_price: 0 }
-const fmt = (n) => `S$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
+const fmt = (n) => `$${(n || 0).toLocaleString('en-SG', { minimumFractionDigits: 2 })}`
 const statusVariant = { 'In Progress': 'warning', Completed: 'success', Invoiced: 'info' }
 
 const emptyForm = { 
