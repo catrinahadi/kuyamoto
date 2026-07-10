@@ -10,7 +10,7 @@ import { exportServicesToExcel } from '@/utils/exportExcel'
 import { 
   Plus, Pencil, Trash2, Search, Eye, CheckCircle, 
   ChevronLeft, ChevronRight, X, AlertTriangle, FileText, Download,
-  Receipt, TableIcon
+  Receipt
 } from 'lucide-react'
 
 const PAGE_SIZE = 10
@@ -314,7 +314,7 @@ export default function Services() {
             <table className="w-full text-sm">
               <thead className="bg-slate-50 border-b border-slate-100">
                 <tr className="text-left text-xs text-slate-500 uppercase tracking-wider">
-                  <th className="px-3 py-3.5 font-semibold w-8"><input type="checkbox" className="rounded" onChange={e => setSelectedIds(e.target.checked ? new Set(records.map(r => r.id)) : new Set())} checked={selectedIds.size === records.length && records.length > 0} /></th>
+                  <th className="px-3 py-3.5 font-semibold w-8" title="Select records with the same customer to generate a combined invoice"></th>
                   <th className="px-5 py-3.5 font-semibold">Service #</th>
                   <th className="px-5 py-3.5 font-semibold">Quot #</th>
                   <th className="px-5 py-3.5 font-semibold">Customer</th>

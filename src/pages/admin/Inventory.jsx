@@ -116,10 +116,13 @@ export default function Inventory() {
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex bg-white border border-slate-200 rounded-xl p-1 gap-0.5 flex-wrap shadow-sm">
-            {['All', ...CATEGORIES].map(c => (
-              <button key={c} onClick={() => { setCat(c); setPage(0) }} className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${catFilter === c ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{c}</button>
-            ))}
+          <div className="flex flex-col gap-1">
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-1">Filter by Category</span>
+            <div className="flex bg-white border border-slate-200 rounded-xl p-1 gap-0.5 flex-wrap shadow-sm">
+              {['All', ...CATEGORIES].map(c => (
+                <button key={c} onClick={() => { setCat(c); setPage(0) }} className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${catFilter === c ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{c}</button>
+              ))}
+            </div>
           </div>
           <div className="relative w-full sm:w-96">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />

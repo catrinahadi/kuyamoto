@@ -150,41 +150,72 @@ export default function Reports() {
           <p className="text-sm text-slate-500">Generate and export business reports</p>
         </div>
 
-        {/* Tabs */}
-        <div className="flex flex-wrap gap-0.5 bg-white border border-slate-200 rounded-xl p-1">
+        {/* Report Type Tabs */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
           {TABS.map(t => (
-            <button key={t.key} onClick={() => setTab(t.key)} className={`px-4 py-2 text-xs font-semibold rounded-lg transition-all ${tab === t.key ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+            <button
+              key={t.key}
+              onClick={() => setTab(t.key)}
+              className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl border text-xs font-semibold transition-all ${
+                tab === t.key
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+              }`}
+            >
+              <FileText className="w-4 h-4" />
               {t.label}
             </button>
           ))}
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3">
+        {/* Filter Bar */}
+        <div className="bg-white border border-slate-200 rounded-2xl px-5 py-4 flex flex-wrap items-end gap-4 shadow-sm">
           {hasDateFilter && (
             <>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-slate-400" />
-                <label className="text-xs font-semibold text-slate-600">From:</label>
-                <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" />
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5" /> From
+                </label>
+                <input
+                  type="date"
+                  value={dateFrom}
+                  onChange={e => setDateFrom(e.target.value)}
+                  className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                />
               </div>
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-semibold text-slate-600">To:</label>
-                <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white" />
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-semibold text-slate-500">To</label>
+                <input
+                  type="date"
+                  value={dateTo}
+                  onChange={e => setDateTo(e.target.value)}
+                  className="px-3 py-2 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50"
+                />
               </div>
             </>
           )}
           {hasStatusFilter && (
-            <div className="flex bg-white border border-slate-200 rounded-xl p-1 gap-0.5">
-              {statusOpts.map(s => <button key={s} onClick={() => setStatus(s)} className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${statusFilter === s ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-700'}`}>{s}</button>)}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-semibold text-slate-500">Status</label>
+              <div className="flex bg-slate-50 border border-slate-200 rounded-xl p-1 gap-0.5">
+                {statusOpts.map(s => (
+                  <button
+                    key={s}
+                    onClick={() => setStatus(s)}
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${statusFilter === s ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
-          <div className="ml-auto flex gap-2">
+          <div className="ml-auto flex items-end gap-2">
             <button onClick={exportPDF} className="flex items-center gap-2 px-4 py-2.5 bg-red-500 text-white text-xs font-semibold rounded-xl hover:bg-red-600 transition-all shadow-sm">
-              <Download className="w-3.5 h-3.5" /> PDF
+              <Download className="w-3.5 h-3.5" /> Export PDF
             </button>
             <button onClick={exportExcel} className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition-all shadow-sm">
-              <Download className="w-3.5 h-3.5" /> Excel
+              <Download className="w-3.5 h-3.5" /> Export Excel
             </button>
           </div>
         </div>

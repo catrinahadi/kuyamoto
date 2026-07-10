@@ -46,7 +46,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Toaster position="top-right" toastOptions={{ duration: 3000, style: { borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.12)' } }} />
+        <Toaster position="bottom-right" toastOptions={{ duration: 3000, style: { borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.12)' } }} />
         <AppRoutes />
       </AuthProvider>
     </BrowserRouter>

@@ -88,13 +88,6 @@ export default function AdminLayout({ children }) {
 
       {/* Main area */}
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
-        {/* Topbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-end px-6 sticky top-0 z-20 shadow-sm">
-          <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-full flex items-center justify-center shadow-sm">
-            <Car className="w-4 h-4 text-white" />
-          </div>
-        </header>
-
         {/* Page content */}
         <main className="flex-1 p-6 animate-fade-in">
           {children}
