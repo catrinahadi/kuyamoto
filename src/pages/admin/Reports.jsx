@@ -164,13 +164,12 @@ export default function Reports() {
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex flex-col items-center justify-center gap-1 px-3 py-3 rounded-xl border text-xs font-semibold transition-all ${
+              className={`flex items-center justify-center h-12 px-3 rounded-xl border text-sm font-semibold transition-all ${
                 tab === t.key
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200'
-                  : 'bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                  ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300 hover:text-slate-800'
               }`}
             >
-              <FileText className="w-4 h-4" />
               {t.label}
             </button>
           ))}
@@ -184,7 +183,7 @@ export default function Reports() {
             {hasDateFilter && (
               <>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                  <label className="text-xs font-medium text-slate-500 flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5" /> From
                   </label>
                   <input
@@ -195,7 +194,7 @@ export default function Reports() {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold text-slate-500">To</label>
+                  <label className="text-xs font-medium text-slate-500">To</label>
                   <input
                     type="date"
                     value={dateTo}
@@ -238,7 +237,7 @@ export default function Reports() {
           {/* Row 2: Status filter */}
           {hasStatusFilter && (
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-500">Status</label>
+              <label className="text-xs font-medium text-slate-500">Status</label>
               <div className="flex bg-slate-50 border border-slate-200 rounded-xl p-1 gap-0.5 w-fit">
                 {statusOpts.map(s => (
                   <button
