@@ -306,7 +306,6 @@ export default function Customers() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                   Contact Number <span className="text-red-500">*</span>
-                  <span className="ml-2 text-xs font-normal text-slate-400">Singapore (+65)</span>
                 </label>
                 <div className="flex">
                   <span className="inline-flex items-center px-3 bg-slate-100 border border-r-0 border-slate-200 rounded-l-xl text-sm text-slate-600 font-semibold">
@@ -324,7 +323,7 @@ export default function Customers() {
               {/* Email — optional */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                  Email Address <span className="text-xs font-normal text-slate-400">(optional)</span>
+                  Email Address
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -332,7 +331,7 @@ export default function Customers() {
                     type="email"
                     value={form.email}
                     onChange={e => setField('email', e.target.value)}
-                    placeholder="customer@email.com"
+                    placeholder=""
                     className="w-full pl-10 pr-4 py-3 text-base border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -341,7 +340,7 @@ export default function Customers() {
               {/* Social Media — optional */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                  Social Media <span className="text-xs font-normal text-slate-400">(optional — Instagram handle)</span>
+                  Social Media
                 </label>
                 <div className="relative">
                   <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -357,7 +356,7 @@ export default function Customers() {
               {/* Source */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                  How did they find us? <span className="text-xs font-normal text-slate-400">(Source)</span>
+                  How did they find us?
                 </label>
                 <select
                   value={form.source}
@@ -455,7 +454,7 @@ export default function Customers() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-600 mb-1">
-                        Bike Class <span className="text-slate-400 font-normal">(auto-detected from CC)</span>
+                        Bike Class
                       </label>
                       <select
                         value={v.size || ''}
