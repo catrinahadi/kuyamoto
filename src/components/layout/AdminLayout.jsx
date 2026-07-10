@@ -88,6 +88,9 @@ export default function AdminLayout({ children }) {
 
       {/* Main area */}
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
+        {/* Topbar */}
+        <header className="h-16 bg-white border-b border-slate-200 sticky top-0 z-20 shadow-sm" />
+
         {/* Page content */}
         <main className="flex-1 p-6 animate-fade-in">
           {children}
