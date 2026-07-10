@@ -177,7 +177,7 @@ export default function Reports() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white border border-slate-200 rounded-2xl px-5 py-4 space-y-4 shadow-sm">
+        <div className="space-y-4">
 
           {/* Row 1: Date range + Export */}
           <div className="flex flex-wrap items-end gap-4">
